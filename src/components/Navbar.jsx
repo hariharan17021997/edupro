@@ -17,6 +17,8 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Popover from "@mui/material/Popover";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+
 import {
   Link,
   Routes,
@@ -219,9 +221,11 @@ export default function MiniDrawer() {
               >
                 <MenuIcon />
               </CommonIconButton>
-              <Typography variant="h6" noWrap component="div">
-                {APP_CONFIG.name}
-              </Typography>
+              {!open && (
+                <Typography variant="h6" noWrap component="div">
+                  {APP_CONFIG.name}
+                </Typography>
+              )}
               <div
                 color="inherit"
                 style={{
@@ -257,7 +261,15 @@ export default function MiniDrawer() {
           </AppBar>
           <Drawer variant="permanent" open={open}>
             <DrawerHeader>
-              <Box sx={theme.custom.drawerHeaderPageName}>{getPageName()}</Box>
+              {/* <Box sx={theme.custom.drawerHeaderPageName}>{getPageName()}</Box> */}
+              <Box
+                sx={{
+                  ...theme.custom.drawerHeaderPageName,
+                  textAlign: "center",
+                }}
+              >
+                {APP_CONFIG.name}
+              </Box>
               <CommonIconButton onClick={handleDrawerClose}>
                 {theme.direction === "rtl" ? (
                   <ChevronRightIcon />
@@ -325,8 +337,16 @@ export default function MiniDrawer() {
               ))}
             </List>
           </Drawer>
-          <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          <Box component="main" sx={{ flexGrow: 1, p: 1 }}>
             <DrawerHeader />
+            <Breadcrumbs separator="›" aria-label="breadcrumb">
+              <Typography sx={theme.custom.breadcrumbs}>{"Home"}</Typography>
+              <Typography sx={theme.custom.breadcrumbs}>{"Mid"}</Typography>
+              <Typography sx={theme.custom.breadcrumbs}>
+                {getPageName()}
+              </Typography>
+            </Breadcrumbs>
+            <Box sx={theme.custom.drawerHeaderPageName}>{getPageName()}</Box>
             <Routes>
               <Route path="/home" element={<Home />} />
               <Route path="/about" element={<About />} />

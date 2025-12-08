@@ -19,6 +19,8 @@ import {
 import { useTheme } from "@mui/material/styles";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import SearchIcon from "@mui/icons-material/Search";
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 
 /**
  * CommonDataTable - A reusable data table component with pagination, sorting, and search
@@ -49,6 +51,8 @@ export default function CommonDataTable({
   const [sortArray, setSortArray] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [showFilter, setShowFilter] = useState(false);
+  const [showAdd, setShowAdd] = useState(false);
   const [searchInputs, setSearchInputs] = useState(
     columns.reduce((acc, col) => ({ ...acc, [col.id]: "" }), {})
   );
@@ -224,43 +228,90 @@ export default function CommonDataTable({
     <Box>
       {/* Filter & Search Toggle Buttons */}
       <Box sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1 }}>
-        <Tooltip title={showFilters ? "Hide filters" : "Show filters"}>
-          <IconButton
-            onClick={() => {
-              if (showFilters) {
-                // Clear filters when hiding
-                setColumnFilters(
-                  columns.reduce((acc, col) => ({ ...acc, [col.id]: "" }), {})
-                );
-              }
-              setShowFilters(!showFilters);
-            }}
-            color={showFilters ? "primary" : "default"}
-            size="small"
-          >
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title={showSearch ? "Hide search" : "Show search"}>
-          <IconButton
-            onClick={() => {
-              if (showSearch) {
-                // Clear search when hiding
-                const cleared = columns.reduce(
-                  (acc, col) => ({ ...acc, [col.id]: "" }),
-                  {}
-                );
-                setSearchInputs(cleared);
-                setActiveSearch(cleared);
-              }
-              setShowSearch(!showSearch);
-            }}
-            color={showSearch ? "primary" : "default"}
-            size="small"
-          >
-            <SearchIcon />
-          </IconButton>
-        </Tooltip>
+        <Box
+          sx={{
+            borderRadius: 1,
+            backgroundColor: "#58535158",
+          }}
+        >
+          <Tooltip title={showFilters ? "Hide filters" : "Show filters"}>
+            <IconButton
+              onClick={() => {
+                if (showFilters) {
+                  // Clear filters when hiding
+                  setColumnFilters(
+                    columns.reduce((acc, col) => ({ ...acc, [col.id]: "" }), {})
+                  );
+                }
+                setShowFilters(!showFilters);
+              }}
+              color={showFilters ? "primary" : "default"}
+              size="small"
+            >
+              <FilterListIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={showSearch ? "Hide search" : "Show search"}>
+            <IconButton
+              onClick={() => {
+                if (showSearch) {
+                  // Clear search when hiding
+                  const cleared = columns.reduce(
+                    (acc, col) => ({ ...acc, [col.id]: "" }),
+                    {}
+                  );
+                  setSearchInputs(cleared);
+                  setActiveSearch(cleared);
+                }
+                setShowSearch(!showSearch);
+              }}
+              color={showSearch ? "primary" : "default"}
+              size="small"
+            >
+              <SearchIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={showAdd ? "Hide search" : "Show search"}>
+            <IconButton
+              onClick={() => {
+                if (showAdd) {
+                  // Clear search when hiding
+                  const cleared = columns.reduce(
+                    (acc, col) => ({ ...acc, [col.id]: "" }),
+                    {}
+                  );
+                  setSearchInputs(cleared);
+                  setActiveSearch(cleared);
+                }
+                setShowAdd(!showAdd);
+              }}
+              color={showAdd ? "primary" : "default"}
+              size="small"
+            >
+              <AddOutlinedIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={showFilter ? "Hide search" : "Show search"}>
+            <IconButton
+              onClick={() => {
+                if (showFilter) {
+                  // Clear search when hiding
+                  const cleared = columns.reduce(
+                    (acc, col) => ({ ...acc, [col.id]: "" }),
+                    {}
+                  );
+                  setSearchInputs(cleared);
+                  setActiveSearch(cleared);
+                }
+                setShowFilter(!showFilter);
+              }}
+              color={showFilter ? "primary" : "default"}
+              size="small"
+            >
+              <FilterAltOutlinedIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
       </Box>
 
       {/* Advanced Search Panel - All columns with exact match */}
@@ -339,10 +390,9 @@ export default function CommonDataTable({
             <TableRow
               ref={headerRef}
               sx={{
-                backgroundColor: "#05206A !important",
+                backgroundColor: "#2b88ea !important",
                 // background:"linear-gradient(90deg, #05206A 0%, #0F4BD8 50%, #3B82F6 100%) !important",
-                background:
-                  "linear-gradient(90deg, #05486aff 0%, #0F4BD8 50%, #3ba5f6ff 100%)",
+                // background:"linear-gradient(90deg, #05486aff 0%, #0F4BD8 50%, #3ba5f6ff 100%)",
                 height: 20,
                 position: "sticky",
                 top: 0,
@@ -442,14 +492,13 @@ export default function CommonDataTable({
                 onClick={() => onRowClick?.(row)}
                 sx={{
                   cursor: onRowClick ? "pointer" : "default",
-                  background:
-                    index % 2 === 0
-                      ? "linear-gradient(90deg, rgba(23,99,157,0.4) 0%, rgba(59,129,246,0.12) 100%)"
-                      : theme.palette.action.hover,
+                  // background:index % 2 === 0 ? "linear-gradient(90deg, rgba(23,99,157,0.4) 0%, rgba(59,129,246,0.12) 100%)" : theme.palette.action.hover,
+                  background: index % 2 === 0 ? "#ffffffff" : "#5853511f",
+
                   "&:hover": onRowClick
                     ? {
-                        backgroundColor: theme.palette.primary.light,
-                        opacity: 0.5,
+                        backgroundColor: "#d3e3fd !important",
+
                         transition: "background-color 0.2s ease",
                       }
                     : {},

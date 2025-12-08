@@ -5,7 +5,7 @@ import { keyframes } from "@mui/material";
  * ============================================================================
  * EDUPRO CENTRALIZED DESIGN SYSTEM & THEME CONFIGURATION
  * ============================================================================
- * 
+ *
  * All design tokens, styles, and theme configurations in one place
  * Sections:
  * 1. Animations & Keyframes
@@ -73,30 +73,63 @@ export const animations = {
 // ============================================================================
 
 export const colors = {
-  primary: { main: "#1976d2", light: "#42a5f5", dark: "#1565c0", contrastText: "#fff" },
-  secondary: { main: "#dc004e", light: "#f73378", dark: "#9a0036", contrastText: "#fff" },
+  primary: {
+    main: "#1976d2",
+    light: "#42a5f5",
+    dark: "#1565c0",
+    contrastText: "#fff",
+  },
+  secondary: {
+    main: "#dc004e",
+    light: "#f73378",
+    dark: "#9a0036",
+    contrastText: "#fff",
+  },
   success: { main: "#4caf50", light: "#81c784", dark: "#388e3c" },
   warning: { main: "#ff9800", light: "#ffb74d", dark: "#f57c00" },
   error: { main: "#f44336", light: "#ef5350", dark: "#d32f2f" },
   info: { main: "#2196f3", light: "#64b5f6", dark: "#1976d2" },
   background: { default: "#fafafa", paper: "#ffffff", dark: "#f5f5f5" },
-  text: { primary: "rgba(0, 0, 0, 0.87)", secondary: "rgba(0, 0, 0, 0.60)", disabled: "rgba(0, 0, 0, 0.38)" },
+  text: {
+    primary: "rgba(0, 0, 0, 0.87)",
+    secondary: "rgba(0, 0, 0, 0.60)",
+    disabled: "rgba(0, 0, 0, 0.38)",
+  },
   grey: {
-    50: "#fafafa", 100: "#f5f5f5", 200: "#eeeeee", 300: "#e0e0e0", 400: "#bdbdbd",
-    500: "#9e9e9e", 600: "#757575", 700: "#616161", 800: "#424242", 900: "#212121",
+    50: "#fafafa",
+    100: "#f5f5f5",
+    200: "#eeeeee",
+    300: "#e0e0e0",
+    400: "#bdbdbd",
+    500: "#9e9e9e",
+    600: "#757575",
+    700: "#616161",
+    800: "#424242",
+    900: "#212121",
   },
   login: {
-    gradientStart: "#1976d2", gradientMid: "#2D68C4", gradientEnd: "#1560BD",
-    overlayLight: "rgba(255, 255, 255, 0.2)", overlayMedium: "rgba(255, 255, 255, 0.15)",
+    gradientStart: "#1976d2",
+    gradientMid: "#2D68C4",
+    gradientEnd: "#1560BD",
+    overlayLight: "rgba(255, 255, 255, 0.2)",
+    overlayMedium: "rgba(255, 255, 255, 0.15)",
     glassBorder: "rgba(255, 255, 255, 0.3)",
   },
   notification: {
-    unreadBg: "#f0f4ff", unreadHover: "#e3f2fd", readBg: "#ffffff", readHover: "#f9f9f9",
-    successBg: "#e8f5e9", infoBg: "#e3f2fd",
+    unreadBg: "#f0f4ff",
+    unreadHover: "#e3f2fd",
+    readBg: "#ffffff",
+    readHover: "#f9f9f9",
+    successBg: "#e8f5e9",
+    infoBg: "#e3f2fd",
   },
   code: {
-    headerBg: "#424242", languageBadgeBg: "#616161", blockBg: "#212121",
-    lineNumberColor: "#757575", lineNumberBorder: "#616161", textColor: "#f5f5f5",
+    headerBg: "#424242",
+    languageBadgeBg: "#616161",
+    blockBg: "#212121",
+    lineNumberColor: "#757575",
+    lineNumberBorder: "#616161",
+    textColor: "#f5f5f5",
   },
 };
 
@@ -111,11 +144,38 @@ export const gradients = {
 // ============================================================================
 
 export const typography = {
-  fontFamily: { primary: '"Roboto", "Helvetica", "Arial", sans-serif', code: "'Fira Code', 'Courier New', monospace" },
-  fontWeight: { light: 300, regular: 400, medium: 500, semiBold: 600, bold: 700, extraBold: 800 },
-  fontSize: { xs: "0.65rem", sm: "0.75rem", base: "0.875rem", md: "1rem", lg: "1.125rem", xl: "1.25rem", "2xl": "1.5rem", "3xl": "1.75rem", "4xl": "2rem", "5xl": "2.5rem" },
+  fontFamily: {
+    primary: '"Roboto", "Helvetica", "Arial", sans-serif',
+    code: "'Fira Code', 'Courier New', monospace",
+  },
+  fontWeight: {
+    light: 300,
+    regular: 400,
+    medium: 500,
+    semiBold: 600,
+    bold: 700,
+    extraBold: 800,
+  },
+  fontSize: {
+    xs: "0.65rem",
+    sm: "0.75rem",
+    base: "0.875rem",
+    md: "1rem",
+    lg: "1.125rem",
+    xl: "1.25rem",
+    "2xl": "1.5rem",
+    "3xl": "1.75rem",
+    "4xl": "2rem",
+    "5xl": "2.5rem",
+  },
   lineHeight: { tight: 1.2, normal: 1.5, relaxed: 1.6, loose: 1.8 },
-  letterSpacing: { tight: "-0.05em", normal: "0", wide: "0.025em", wider: "0.05em", widest: "0.1em" },
+  letterSpacing: {
+    tight: "-0.05em",
+    normal: "0",
+    wide: "0.025em",
+    wider: "0.05em",
+    widest: "0.1em",
+  },
 };
 
 // ============================================================================
@@ -124,7 +184,12 @@ export const typography = {
 
 export const spacing = {
   unit: 8,
-  xs: 4, sm: 8, md: 16, lg: 24, xl: 32, xxl: 48,
+  xs: 4,
+  sm: 8,
+  md: 16,
+  lg: 24,
+  xl: 32,
+  xxl: 48,
   pagePadding: { xs: 16, sm: 24, md: 32, lg: 48 },
   component: { cardPadding: 24, sectionMargin: 32, elementGap: 16 },
   layout: { drawerWidth: 240, appBarHeight: 64, contentPadding: 24 },
@@ -149,7 +214,11 @@ export const shadows = {
   appBar: "0 2px 8px rgba(0, 0, 0, 0.08)",
   login: "0 10px 40px rgba(0, 0, 0, 0.2)",
   loginCard: "0 20px 60px rgba(0, 0, 0, 0.3)",
-  text: { sm: "0 1px 2px rgba(0, 0, 0, 0.1)", md: "0 2px 4px rgba(0, 0, 0, 0.15)", lg: "0 2px 20px rgba(0, 0, 0, 0.2)" },
+  text: {
+    sm: "0 1px 2px rgba(0, 0, 0, 0.1)",
+    md: "0 2px 4px rgba(0, 0, 0, 0.15)",
+    lg: "0 2px 20px rgba(0, 0, 0, 0.2)",
+  },
 };
 
 // ============================================================================
@@ -157,8 +226,23 @@ export const shadows = {
 // ============================================================================
 
 export const borderRadius = {
-  none: "0px", xs: "2px", sm: "4px", md: "8px", lg: "12px", xl: "16px", "2xl": "20px", "3xl": "24px", full: "9999px",
-  button: "4px", card: "8px", input: "4px", chip: "4px", dialog: "8px", iconButton: "4px", loginCard: "16px", codeBlock: "8px",
+  none: "0px",
+  xs: "2px",
+  sm: "4px",
+  md: "8px",
+  lg: "12px",
+  xl: "16px",
+  "2xl": "20px",
+  "3xl": "24px",
+  full: "9999px",
+  button: "4px",
+  card: "8px",
+  input: "4px",
+  chip: "4px",
+  dialog: "8px",
+  iconButton: "4px",
+  loginCard: "16px",
+  codeBlock: "8px",
 };
 
 // ============================================================================
@@ -166,10 +250,30 @@ export const borderRadius = {
 // ============================================================================
 
 export const transitions = {
-  duration: { shortest: 150, shorter: 200, short: 250, standard: 300, complex: 375, enteringScreen: 225, leavingScreen: 195 },
-  easing: { easeInOut: "cubic-bezier(0.4, 0, 0.2, 1)", easeOut: "cubic-bezier(0.0, 0, 0.2, 1)", easeIn: "cubic-bezier(0.4, 0, 1, 1)", sharp: "cubic-bezier(0.4, 0, 0.6, 1)" },
-  common: { fast: "all 0.2s ease", normal: "all 0.3s ease", slow: "all 0.5s ease" },
-  button: "all 0.3s ease", card: "all 0.3s ease", hover: "all 0.2s ease", drawer: "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+  duration: {
+    shortest: 150,
+    shorter: 200,
+    short: 250,
+    standard: 300,
+    complex: 375,
+    enteringScreen: 225,
+    leavingScreen: 195,
+  },
+  easing: {
+    easeInOut: "cubic-bezier(0.4, 0, 0.2, 1)",
+    easeOut: "cubic-bezier(0.0, 0, 0.2, 1)",
+    easeIn: "cubic-bezier(0.4, 0, 1, 1)",
+    sharp: "cubic-bezier(0.4, 0, 0.6, 1)",
+  },
+  common: {
+    fast: "all 0.2s ease",
+    normal: "all 0.3s ease",
+    slow: "all 0.5s ease",
+  },
+  button: "all 0.3s ease",
+  card: "all 0.3s ease",
+  hover: "all 0.2s ease",
+  drawer: "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
 };
 
 // ============================================================================
@@ -177,7 +281,7 @@ export const transitions = {
 // ============================================================================
 
 export const breakpoints = {
-  values: { xs: 0, sm: 600, md: 960, lg: 1280, xl: 1920 },
+  values: { xs: 0, sm: 600, md: 960, xl: 1920 },
 };
 
 // ============================================================================
@@ -185,9 +289,18 @@ export const breakpoints = {
 // ============================================================================
 
 export const zIndex = {
-  base: 0, dropdown: 1000, sticky: 1020, fixed: 1030, modalBackdrop: 1040,
-  modal: 1050, popover: 1060, tooltip: 1070, notification: 1080,
-  appBar: 1100, drawer: 1200, snackbar: 1400,
+  base: 0,
+  dropdown: 1000,
+  sticky: 1020,
+  fixed: 1030,
+  modalBackdrop: 1040,
+  modal: 1050,
+  popover: 1060,
+  tooltip: 1070,
+  notification: 1080,
+  appBar: 1100,
+  drawer: 1200,
+  snackbar: 1400,
 };
 
 // ============================================================================
@@ -208,15 +321,43 @@ const theme = createTheme({
 
   typography: {
     fontFamily: typography.fontFamily.primary,
-    h1: { fontSize: "2.5rem", fontWeight: typography.fontWeight.semiBold, lineHeight: typography.lineHeight.tight },
-    h2: { fontSize: "2rem", fontWeight: typography.fontWeight.semiBold, lineHeight: 1.3 },
-    h3: { fontSize: "1.75rem", fontWeight: typography.fontWeight.semiBold, lineHeight: 1.4 },
-    h4: { fontSize: "1.5rem", fontWeight: typography.fontWeight.semiBold, lineHeight: 1.4 },
-    h5: { fontSize: "1.25rem", fontWeight: typography.fontWeight.semiBold, lineHeight: typography.lineHeight.normal },
-    h6: { fontSize: "1rem", fontWeight: typography.fontWeight.semiBold, lineHeight: typography.lineHeight.relaxed },
+    h1: {
+      fontSize: "2.5rem",
+      fontWeight: typography.fontWeight.semiBold,
+      lineHeight: typography.lineHeight.tight,
+    },
+    h2: {
+      fontSize: "2rem",
+      fontWeight: typography.fontWeight.semiBold,
+      lineHeight: 1.3,
+    },
+    h3: {
+      fontSize: "1.75rem",
+      fontWeight: typography.fontWeight.semiBold,
+      lineHeight: 1.4,
+    },
+    h4: {
+      fontSize: "1.5rem",
+      fontWeight: typography.fontWeight.semiBold,
+      lineHeight: 1.4,
+    },
+    h5: {
+      fontSize: "1.25rem",
+      fontWeight: typography.fontWeight.semiBold,
+      lineHeight: typography.lineHeight.normal,
+    },
+    h6: {
+      fontSize: "1rem",
+      fontWeight: typography.fontWeight.semiBold,
+      lineHeight: typography.lineHeight.relaxed,
+    },
     body1: { fontSize: "1rem", lineHeight: typography.lineHeight.normal },
     body2: { fontSize: "0.875rem", lineHeight: 1.43 },
-    button: { textTransform: "none", fontWeight: typography.fontWeight.semiBold, fontSize: "1rem" },
+    button: {
+      textTransform: "none",
+      fontWeight: typography.fontWeight.semiBold,
+      fontSize: "1rem",
+    },
     caption: { fontSize: "0.75rem", lineHeight: 1.66 },
   },
 
@@ -234,7 +375,10 @@ const theme = createTheme({
           padding: "10px 24px",
           borderRadius: borderRadius.button,
           transition: transitions.button,
-          "&:hover": { transform: "translateY(-2px)", boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)" },
+          "&:hover": {
+            transform: "translateY(-2px)",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+          },
           "&.MuiButton-sizeLarge": { padding: "12px 32px", fontSize: "1.1rem" },
         },
         contained: { boxShadow: shadows.button },
@@ -264,7 +408,11 @@ const theme = createTheme({
 
     MuiAppBar: {
       styleOverrides: {
-        root: { boxShadow: shadows.appBar, backgroundColor: colors.background.paper, color: colors.primary.main },
+        root: {
+          boxShadow: shadows.appBar,
+          backgroundColor: colors.background.paper,
+          color: colors.primary.main,
+        },
       },
     },
 
@@ -289,8 +437,14 @@ const theme = createTheme({
     MuiTableBody: {
       styleOverrides: {
         root: {
-          "& .MuiTableRow-root:hover": { backgroundColor: colors.grey[50], transition: transitions.hover },
-          "& .MuiTableCell-body": { borderBottom: `1px solid ${colors.grey[300]}`, fontSize: "0.875rem" },
+          "& .MuiTableRow-root:hover": {
+            backgroundColor: colors.grey[50],
+            transition: transitions.hover,
+          },
+          "& .MuiTableCell-body": {
+            borderBottom: `1px solid ${colors.grey[300]}`,
+            fontSize: "0.875rem",
+          },
         },
       },
     },
@@ -298,13 +452,21 @@ const theme = createTheme({
     MuiTableCell: {
       styleOverrides: {
         root: { padding: "8px 12px" },
-        head: { fontWeight: typography.fontWeight.bold, textTransform: "uppercase", fontSize: "0.75rem", letterSpacing: typography.letterSpacing.wide },
+        head: {
+          fontWeight: typography.fontWeight.bold,
+          textTransform: "uppercase",
+          fontSize: "0.75rem",
+          letterSpacing: typography.letterSpacing.wide,
+        },
       },
     },
 
     MuiDrawer: {
       styleOverrides: {
-        paper: { backgroundColor: colors.background.paper, borderRight: `1px solid ${colors.grey[300]}` },
+        paper: {
+          backgroundColor: colors.background.paper,
+          borderRight: `1px solid ${colors.grey[300]}`,
+        },
       },
     },
 
@@ -335,7 +497,10 @@ const theme = createTheme({
           borderRadius: borderRadius.card,
           boxShadow: shadows.card,
           transition: transitions.card,
-          "&:hover": { boxShadow: shadows.cardHover, transform: "translateY(-8px)" },
+          "&:hover": {
+            boxShadow: shadows.cardHover,
+            transform: "translateY(-8px)",
+          },
         },
       },
     },
@@ -345,11 +510,18 @@ const theme = createTheme({
     },
 
     MuiAlert: {
-      styleOverrides: { root: { borderRadius: borderRadius.button, fontSize: "0.875rem" } },
+      styleOverrides: {
+        root: { borderRadius: borderRadius.button, fontSize: "0.875rem" },
+      },
     },
 
     MuiChip: {
-      styleOverrides: { root: { borderRadius: borderRadius.chip, fontWeight: typography.fontWeight.semiBold } },
+      styleOverrides: {
+        root: {
+          borderRadius: borderRadius.chip,
+          fontWeight: typography.fontWeight.semiBold,
+        },
+      },
     },
 
     MuiIconButton: {
@@ -369,22 +541,81 @@ const theme = createTheme({
 
   custom: {
     // Login Page
-    loginContainer: { minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: gradients.loginBackground },
-    loginCard: { width: "100%", maxWidth: 450, padding: 4, boxShadow: shadows.login, borderRadius: 2 },
+    loginContainer: {
+      minHeight: "100vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: gradients.loginBackground,
+    },
+    loginCard: {
+      width: "100%",
+      maxWidth: 450,
+      padding: 4,
+      boxShadow: shadows.login,
+      borderRadius: 2,
+    },
     loginHeader: { textAlign: "center", marginBottom: 4 },
     loginForm: { display: "grid", gap: 2.5 },
 
     // Drawer
-    drawerHeaderPageName: { flex: 1, textAlign: "center", fontSize: typography.fontSize.xl, fontWeight: typography.fontWeight.bold, color: colors.primary.main, textTransform: "uppercase", letterSpacing: typography.letterSpacing.wide },
+    drawerHeaderPageName: {
+      mt: 1,
+      flex: 1,
+      textAlign: "left",
+      fontSize: typography.fontSize.xl,
+      fontWeight: typography.fontWeight.bold,
+      color: colors.primary.main,
+      textTransform: "uppercase",
+      letterSpacing: typography.letterSpacing.wide,
+    },
+
+    breadcrumbs: {
+      flex: 1,
+      textAlign: "center",
+      fontSize: typography.fontSize.md,
+      fontWeight: typography.fontWeight.light,
+      color: colors.primary.main,
+      textTransform: "lowercase",
+      letterSpacing: typography.letterSpacing.wide,
+    },
 
     // Course Content
-    courseHeader: { mb: 4, pb: 3, borderBottom: `1px solid ${colors.grey[300]}` },
-    lessonItem: { display: "flex", alignItems: "center", justifyContent: "space-between", p: 2, borderRadius: 1, transition: transitions.hover, cursor: "pointer", "&:hover": { backgroundColor: colors.primary.main + "0D" } },
+    courseHeader: {
+      mb: 4,
+      pb: 3,
+      borderBottom: `1px solid ${colors.grey[300]}`,
+    },
+    lessonItem: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      p: 2,
+      borderRadius: 1,
+      transition: transitions.hover,
+      cursor: "pointer",
+      "&:hover": { backgroundColor: colors.primary.main + "0D" },
+    },
 
     // Reusable Patterns
-    glassmorphism: { background: "rgba(255, 255, 255, 0.95)", backdropFilter: "blur(20px)", border: `1px solid ${colors.login.glassBorder}` },
-    cardHoverEffect: { transition: transitions.card, "&:hover": { boxShadow: shadows.cardHover, transform: "translateY(-8px)" } },
-    gradientText: { background: gradients.primary, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" },
+    glassmorphism: {
+      background: "rgba(255, 255, 255, 0.95)",
+      backdropFilter: "blur(20px)",
+      border: `1px solid ${colors.login.glassBorder}`,
+    },
+    cardHoverEffect: {
+      transition: transitions.card,
+      "&:hover": {
+        boxShadow: shadows.cardHover,
+        transform: "translateY(-8px)",
+      },
+    },
+    gradientText: {
+      background: gradients.primary,
+      WebkitBackgroundClip: "text",
+      WebkitTextFillColor: "transparent",
+      backgroundClip: "text",
+    },
   },
 });
 
