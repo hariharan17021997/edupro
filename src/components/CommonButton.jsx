@@ -28,7 +28,10 @@ export default function CommonButton({
       onClick={onClick}
       startIcon={startIcon}
       endIcon={endIcon}
-      sx={sx}
+      sx={{
+        height: "40px", // Adjust the value as needed
+        ...sx,
+      }}
       {...rest}
     >
       {children}

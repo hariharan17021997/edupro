@@ -11,6 +11,10 @@ import {
   CircularProgress,
   keyframes,
 } from "@mui/material";
+import GoogleIcon from "@mui/icons-material/Google";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import MicrosoftIcon from "@mui/icons-material/Microsoft";
 import CommonButton from "../components/CommonButton";
 import DynamicFormField from "../components/DynamicFormField";
 import { useNavigate } from "react-router-dom";
@@ -33,7 +37,7 @@ const floatSlow = keyframes`
 // Simulated API response for signup fields
 const mockFieldResponse = [
   {
-    name: "firstName",
+    name: "firstname",
     label: "First Name",
     type: "text",
     required: true,
@@ -42,7 +46,7 @@ const mockFieldResponse = [
     inputWidth: "220px",
   },
   {
-    name: "lastName",
+    name: "lastname",
     label: "Last Name",
     type: "text",
     required: true,
@@ -207,6 +211,48 @@ export default function AuthPage() {
     if (!validateLogin()) return;
     setToken("demo-token");
     navigate("/home");
+  };
+
+  const handleSocialLogin = (provider) => {
+    // try ENDPOINTS first
+    try {
+      const key1 = provider.toUpperCase();
+      const key2 = provider.toLowerCase();
+      // ENDPOINTS shape may vary; check common patterns
+      const url =
+        (ENDPOINTS && ENDPOINTS.SOCIAL_LOGIN && ENDPOINTS.SOCIAL_LOGIN[key2]) ||
+        (ENDPOINTS && ENDPOINTS.SOCIAL_LOGIN && ENDPOINTS.SOCIAL_LOGIN[key1]) ||
+        (ENDPOINTS && ENDPOINTS.SOCIAL_AUTH_URL) ||
+        (ENDPOINTS &&
+          ENDPOINTS.SOCIAL_LOGIN_URL &&
+          ENDPOINTS.SOCIAL_LOGIN_URL[key2]);
+
+      if (url) {
+        // if url is a function, call it
+        if (typeof url === "function") {
+          window.location.href = url();
+        } else {
+          // append provider param if the endpoint is a generic social auth URL
+          const finalUrl = url.includes("provider=")
+            ? url
+            : `${url}${url.includes("?") ? "&" : "?"}provider=${key2}`;
+          window.location.href = finalUrl;
+        }
+        return;
+      }
+
+      setSnackbar({
+        open: true,
+        severity: "info",
+        message: `Social login for ${provider} is not configured on this demo.`,
+      });
+    } catch (err) {
+      setSnackbar({
+        open: true,
+        severity: "error",
+        message: `Unable to start ${provider} login.`,
+      });
+    }
   };
 
   // Signup validation and submission
@@ -433,6 +479,44 @@ export default function AuthPage() {
                     Sign Up
                   </Typography>
                 </Typography>
+              </Box>
+
+              {/* Social login buttons */}
+              <Box sx={{ textAlign: "center", mt: 2 }}>
+                <Typography variant="body2" color="textSecondary">
+                  Or continue with
+                </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 1,
+                    justifyContent: "center",
+                    mt: 1,
+                  }}
+                >
+                  <GoogleIcon onClick={() => handleSocialLogin("google")} />
+                  <GitHubIcon onClick={() => handleSocialLogin("github")} />
+                  <MicrosoftIcon
+                    onClick={() => handleSocialLogin("microsoft")}
+                  />
+                  <FacebookIcon onClick={() => handleSocialLogin("facebook")} />
+                  {/* <CommonButton
+                    variant="outlined"
+                    startIcon={<GoogleIcon />}
+                    onClick={() => handleSocialLogin("google")}
+                    sx={{ minWidth: 180, height: "50px" }}
+                  >
+                    Continue with Google
+                  </CommonButton>
+                  <CommonButton
+                    variant="outlined"
+                    startIcon={<GitHubIcon />}
+                    onClick={() => handleSocialLogin("github")}
+                    sx={{ minWidth: 180, height: "50px" }}
+                  >
+                    Continue with GitHub
+                  </CommonButton> */}
+                </Box>
               </Box>
             </Box>
           ) : (
