@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Container, Typography, Box } from "@mui/material";
+import { Container, Box } from "@mui/material";
 
 import CommonDataTable from "../components/CommonDataTable";
 
@@ -21,8 +21,8 @@ export default function Home() {
         mobile: "+1 (555) 123-4567",
         country: "India",
         status: "Active",
-        date: "2025-12-01",
-        datetime: "2025-12-01T14:30:00",
+        dob: "2025-12-01",
+        subscriptionexpdate: "2025-12-01T14:30:00",
       },
       {
         id: 2,
@@ -32,8 +32,8 @@ export default function Home() {
         mobile: "+1 (555) 234-5678",
         country: "Canada",
         status: "Active",
-        date: "2025-12-02",
-        datetime: "2025-12-02T14:30:00",
+        dob: "2025-12-02",
+        subscriptionexpdate: "2025-12-02T14:30:00",
       },
       {
         id: 3,
@@ -43,8 +43,8 @@ export default function Home() {
         mobile: "+44 (0) 20 7946 0958",
         country: "India",
         status: "Inactive",
-        date: "2025-12-03",
-        datetime: "2025-12-03T14:30:00",
+        dob: "2025-12-03",
+        subscriptionexpdate: "2025-12-03T14:30:00",
       },
       {
         id: 4,
@@ -54,8 +54,8 @@ export default function Home() {
         mobile: "+61 2 9999 9999",
         country: "Japan",
         status: "Active",
-        date: "2025-12-04",
-        datetime: "2025-12-04T14:30:00",
+        dob: "2025-12-04",
+        subscriptionexpdate: "2025-12-04T14:30:00",
       },
       {
         id: 5,
@@ -65,8 +65,8 @@ export default function Home() {
         mobile: "+33 1 42 34 56 78",
         country: "Japan",
         status: "Pending",
-        date: "2025-12-05",
-        datetime: "2025-12-05T14:30:00",
+        dob: "2025-12-05",
+        subscriptionexpdate: "2025-12-05T14:30:00",
       },
       {
         id: 6,
@@ -76,8 +76,8 @@ export default function Home() {
         mobile: "+49 30 1234 5678",
         country: "India",
         status: "Active",
-        date: "2025-12-06",
-        datetime: "2025-12-06T14:30:00",
+        dob: "2025-12-06",
+        subscriptionexpdate: "2025-12-06T14:30:00",
       },
       {
         id: 7,
@@ -87,8 +87,8 @@ export default function Home() {
         mobile: "+81 3-1234-5678",
         country: "China",
         status: "Active",
-        date: "2025-12-07",
-        datetime: "2025-12-07T14:30:00",
+        dob: "2025-12-07",
+        subscriptionexpdate: "2025-12-07T14:30:00",
       },
       {
         id: 8,
@@ -98,8 +98,8 @@ export default function Home() {
         mobile: "+39 06 1234 5678",
         country: "China",
         status: "Inactive",
-        date: "2025-12-08",
-        datetime: "2025-12-08T14:30:00",
+        dob: "2025-12-08",
+        subscriptionexpdate: "2025-12-08T14:30:00",
       },
     ];
 
@@ -109,7 +109,6 @@ export default function Home() {
 
   // Define table columns for user data
   const columns = [
-    { id: "select", label: "", type: "checkbox" },
     {
       id: "id",
       label: "ID",
@@ -130,8 +129,22 @@ export default function Home() {
       sortable: true,
       type: "string",
     },
-    { id: "email", label: "Email", sortable: true, type: "string" },
-    { id: "mobile", label: "Mobile number", sortable: true, type: "string" },
+    {
+      id: "email",
+      label: "Email",
+      sortable: true,
+      type: "string",
+      width: 200,
+      resizable: true,
+    },
+    {
+      id: "mobile",
+      label: "Mobile number",
+      sortable: true,
+      type: "string",
+      width: 200,
+      resizable: true,
+    },
     {
       id: "country",
       label: "Country",
@@ -139,8 +152,15 @@ export default function Home() {
       type: "string",
     },
     { id: "status", label: "Status", sortable: true, type: "select" },
-    { id: "date", label: "Date", sortable: true, type: "date" },
-    { id: "datetime", label: "Date Time", sortable: true, type: "datetime" },
+    { id: "dob", label: "Date", sortable: true, type: "Date" },
+    {
+      id: "subscriptionexpdate",
+      label: "Date Time",
+      sortable: true,
+      type: "DateTime",
+      width: 200,
+      resizable: true,
+    },
     {
       id: "actions",
       label: "Actions",
@@ -228,7 +248,7 @@ export default function Home() {
     {
       name: "dob",
       label: "Date of Birth",
-      type: "date",
+      type: "Date",
       required: false,
       defaultValue: "",
       width: 6,
@@ -237,7 +257,7 @@ export default function Home() {
     {
       name: "subscriptionexpdate",
       label: "Subscription Expiry Date",
-      type: "datetime",
+      type: "DateTime",
       required: false,
       defaultValue: "",
       width: 6,
@@ -298,6 +318,7 @@ export default function Home() {
           onCreate={handleCreate}
           searchPlaceholder="Search users..."
           pageSize={10}
+          onRowClick={(row) => console.log("Row clicked:", row)}
           onEditRow={handleEditRow}
           onDeleteRow={handleDeleteRow}
         />
