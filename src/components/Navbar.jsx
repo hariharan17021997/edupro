@@ -1,5 +1,6 @@
 import * as React from "react";
 import { styled, useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
@@ -150,6 +151,7 @@ const Drawer = styled(MuiDrawer, {
 
 export default function MiniDrawer() {
   const theme = useTheme();
+  const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
   const [open, setOpen] = React.useState(false);
   const [notificationsAnchor, setNotificationsAnchor] = React.useState(null);
   const navigate = useNavigate();
@@ -259,84 +261,140 @@ export default function MiniDrawer() {
               </div>
             </Toolbar>
           </AppBar>
-          <Drawer variant="permanent" open={open}>
-            <DrawerHeader>
-              {/* <Box sx={theme.custom.drawerHeaderPageName}>{getPageName()}</Box> */}
-              <Box
-                sx={{
-                  ...theme.custom.drawerHeaderPageName,
-                  textAlign: "center",
-                }}
-              >
-                {APP_CONFIG.name}
-              </Box>
-              <CommonIconButton onClick={handleDrawerClose}>
-                {theme.direction === "rtl" ? (
-                  <ChevronRightIcon />
-                ) : (
-                  <ChevronLeftIcon />
-                )}
-              </CommonIconButton>
-            </DrawerHeader>
-            <Divider />
-            <List>
-              {products.map((product) => (
-                <ListItem
-                  key={product.name}
-                  disablePadding
-                  sx={{ display: "block" }}
+          {isSmUp ? (
+            <Drawer variant="permanent" open={open}>
+              <DrawerHeader>
+                <Box
+                  sx={{
+                    ...theme.custom.drawerHeaderPageName,
+                    textAlign: "center",
+                  }}
                 >
-                  <ListItemButton
-                    sx={[
-                      {
-                        minHeight: 48,
-                        px: 2.5,
-                      },
-                      open
-                        ? {
-                            justifyContent: "initial",
-                          }
-                        : {
-                            justifyContent: "center",
-                          },
-                    ]}
-                    component={Link}
-                    to={product.to}
+                  {APP_CONFIG.name}
+                </Box>
+                <CommonIconButton onClick={handleDrawerClose}>
+                  {theme.direction === "rtl" ? (
+                    <ChevronRightIcon />
+                  ) : (
+                    <ChevronLeftIcon />
+                  )}
+                </CommonIconButton>
+              </DrawerHeader>
+              <Divider />
+              <List>
+                {products.map((product) => (
+                  <ListItem
+                    key={product.name}
+                    disablePadding
+                    sx={{ display: "block" }}
                   >
-                    <ListItemIcon
+                    <ListItemButton
                       sx={[
                         {
-                          minWidth: 0,
-                          justifyContent: "center",
+                          minHeight: 48,
+                          px: 2.5,
                         },
                         open
                           ? {
-                              mr: 3,
+                              justifyContent: "initial",
                             }
                           : {
-                              mr: "auto",
+                              justifyContent: "center",
                             },
                       ]}
+                      component={Link}
+                      to={product.to}
                     >
-                      <DynamicIcon key={product.id} name={product.icon} />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={product.name}
-                      sx={[
-                        open
-                          ? {
-                              opacity: 1,
-                            }
-                          : {
-                              opacity: 0,
-                            },
-                      ]}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
-          </Drawer>
+                      <ListItemIcon
+                        sx={[
+                          {
+                            minWidth: 0,
+                            justifyContent: "center",
+                          },
+                          open
+                            ? {
+                                mr: 3,
+                              }
+                            : {
+                                mr: "auto",
+                              },
+                        ]}
+                      >
+                        <DynamicIcon key={product.id} name={product.icon} />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={product.name}
+                        sx={[
+                          open
+                            ? {
+                                opacity: 1,
+                              }
+                            : {
+                                opacity: 0,
+                              },
+                        ]}
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
+            </Drawer>
+          ) : (
+            <MuiDrawer
+              variant="temporary"
+              open={open}
+              onClose={handleDrawerClose}
+              ModalProps={{ keepMounted: true }}
+              sx={{
+                "& .MuiDrawer-paper": { width: drawerWidth },
+              }}
+            >
+              <DrawerHeader>
+                <Box
+                  sx={{
+                    ...theme.custom.drawerHeaderPageName,
+                    textAlign: "center",
+                  }}
+                >
+                  {APP_CONFIG.name}
+                </Box>
+                <CommonIconButton onClick={handleDrawerClose}>
+                  {theme.direction === "rtl" ? (
+                    <ChevronRightIcon />
+                  ) : (
+                    <ChevronLeftIcon />
+                  )}
+                </CommonIconButton>
+              </DrawerHeader>
+              <Divider />
+              <List>
+                {products.map((product) => (
+                  <ListItem
+                    key={product.name}
+                    disablePadding
+                    sx={{ display: "block" }}
+                  >
+                    <ListItemButton
+                      sx={{ minHeight: 48, px: 2.5 }}
+                      component={Link}
+                      to={product.to}
+                      onClick={handleDrawerClose}
+                    >
+                      <ListItemIcon
+                        sx={{ minWidth: 0, justifyContent: "center", mr: 3 }}
+                      >
+                        <DynamicIcon key={product.id} name={product.icon} />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={product.name}
+                        sx={{ opacity: 1 }}
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
+            </MuiDrawer>
+          )}
           <Box component="main" sx={{ flexGrow: 1, p: 1 }}>
             <DrawerHeader />
             <Breadcrumbs separator="›" aria-label="breadcrumb">

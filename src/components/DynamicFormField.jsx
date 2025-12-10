@@ -1,12 +1,21 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   TextField,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  Box,
+  // Box,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
 } from "@mui/material";
+
+// Dayjs/MUI pickers for ranges
+// NOTE: avoid using @mui/x-date-pickers-pro here to remove pro dependency.
+// We'll render two native datetime-local fields inside a dialog instead.
 
 // DynamicFormField: renders a form field based on a JSON field definition
 // Field definition example:
@@ -20,6 +29,7 @@ export default function DynamicFormField({
   onChange,
   error,
   disabled,
+  endAdornment,
 }) {
   const {
     name,
@@ -33,6 +43,22 @@ export default function DynamicFormField({
   // When inside a Grid item, always use 100% width to fill the column
   // Otherwise use inputWidth if provided, or default to 100%
   const fieldSx = { width: field.inputWidth || "100%" };
+
+  // shared range state (used for both date and datetime ranges)
+  const [rangeOpen, setRangeOpen] = useState(false);
+  const [rangeValue, setRangeValue] = useState([null, null]);
+
+  useEffect(() => {
+    if (type !== "daterange" && type !== "datetimerange") return;
+    if (!value) {
+      setRangeValue(["", ""]);
+      return;
+    }
+    const parts = String(value)
+      .split(",")
+      .map((s) => s.trim());
+    setRangeValue([parts[0] || "", parts[1] || ""]);
+  }, [value, type]);
 
   // Select/Dropdown
   if (type === "select") {
@@ -71,6 +97,7 @@ export default function DynamicFormField({
         helperText={error}
         sx={fieldSx}
         disabled={!!disabled}
+        InputProps={endAdornment ? { endAdornment } : undefined}
       />
     );
   }
@@ -89,101 +116,138 @@ export default function DynamicFormField({
         helperText={error}
         sx={fieldSx}
         disabled={!!disabled}
+        InputProps={endAdornment ? { endAdornment } : undefined}
       />
     );
   }
 
   // Date range (two date inputs) - value is expected as "start,end"
   if (type === "daterange") {
-    const parseRange = (val) => {
-      if (!val && val !== 0) return ["", ""];
-      const parts = String(val)
-        .split(",")
-        .map((s) => s.trim());
-      return [parts[0] || "", parts[1] || ""];
+    const apply = () => {
+      const s = rangeValue[0] || "";
+      const e = rangeValue[1] || "";
+      onChange(name, `${s},${e}`);
+      setRangeOpen(false);
     };
 
-    const [start, end] = parseRange(value);
-
     return (
-      <Box
-        sx={{
-          display: "flex",
-          gap: 1,
-          alignItems: "center",
-          width: fieldSx.width,
-        }}
-      >
+      <>
         <TextField
           size="small"
-          label={`${label} (start)`}
-          type="date"
+          label={label}
+          type="text"
           variant="outlined"
-          value={start}
-          onChange={(e) => onChange(name, `${e.target.value},${end}`)}
+          value={value || ""}
+          onClick={() => !disabled && setRangeOpen(true)}
+          placeholder={"YYYY-MM-DD,YYYY-MM-DD"}
           InputLabelProps={{ shrink: true }}
-          sx={{ flex: 1 }}
+          error={!!error}
+          helperText={error}
+          sx={fieldSx}
           disabled={!!disabled}
+          InputProps={endAdornment ? { endAdornment } : undefined}
+          inputProps={{ readOnly: true }}
         />
-        <TextField
-          size="small"
-          label={`${label} (end)`}
-          type="date"
-          variant="outlined"
-          value={end}
-          onChange={(e) => onChange(name, `${start},${e.target.value}`)}
-          InputLabelProps={{ shrink: true }}
-          sx={{ flex: 1 }}
-          disabled={!!disabled}
-        />
-      </Box>
+
+        <Dialog open={rangeOpen} onClose={() => setRangeOpen(false)}>
+          <DialogTitle>{label}</DialogTitle>
+          <DialogContent sx={{ display: "flex", gap: 1, mt: 1 }}>
+            <TextField
+              label="Start"
+              type="date"
+              size="small"
+              value={rangeValue[0] || ""}
+              onChange={(e) =>
+                setRangeValue([e.target.value, rangeValue[1] || ""])
+              }
+              InputLabelProps={{ shrink: true }}
+              sx={{ flex: 1 }}
+            />
+            <TextField
+              label="End"
+              type="date"
+              size="small"
+              value={rangeValue[1] || ""}
+              onChange={(e) =>
+                setRangeValue([rangeValue[0] || "", e.target.value])
+              }
+              InputLabelProps={{ shrink: true }}
+              sx={{ flex: 1 }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setRangeOpen(false)}>Cancel</Button>
+            <Button onClick={apply} variant="contained">
+              Apply
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </>
     );
   }
 
   // Datetime range (two datetime-local inputs) - value as "start,end"
   if (type === "datetimerange") {
-    const parseRange = (val) => {
-      if (!val && val !== 0) return ["", ""];
-      const parts = String(val)
-        .split(",")
-        .map((s) => s.trim());
-      return [parts[0] || "", parts[1] || ""];
+    const apply = () => {
+      const s = rangeValue[0] || "";
+      const e = rangeValue[1] || "";
+      onChange(name, `${s},${e}`);
+      setRangeOpen(false);
     };
 
-    const [start, end] = parseRange(value);
-
     return (
-      <Box
-        sx={{
-          display: "flex",
-          gap: 1,
-          alignItems: "center",
-          width: fieldSx.width,
-        }}
-      >
+      <>
         <TextField
           size="small"
-          label={`${label} (start)`}
-          type="datetime-local"
+          label={label}
+          type="text"
           variant="outlined"
-          value={start}
-          onChange={(e) => onChange(name, `${e.target.value},${end}`)}
+          value={value || ""}
+          onClick={() => !disabled && setRangeOpen(true)}
+          placeholder={"YYYY-MM-DDTHH:MM,YYYY-MM-DDTHH:MM"}
           InputLabelProps={{ shrink: true }}
-          sx={{ flex: 1 }}
+          error={!!error}
+          helperText={error}
+          sx={fieldSx}
           disabled={!!disabled}
+          InputProps={endAdornment ? { endAdornment } : undefined}
+          inputProps={{ readOnly: true }}
         />
-        <TextField
-          size="small"
-          label={`${label} (end)`}
-          type="datetime-local"
-          variant="outlined"
-          value={end}
-          onChange={(e) => onChange(name, `${start},${e.target.value}`)}
-          InputLabelProps={{ shrink: true }}
-          sx={{ flex: 1 }}
-          disabled={!!disabled}
-        />
-      </Box>
+
+        <Dialog open={rangeOpen} onClose={() => setRangeOpen(false)}>
+          <DialogTitle>{label}</DialogTitle>
+          <DialogContent sx={{ display: "flex", gap: 1, mt: 1 }}>
+            <TextField
+              label="Start"
+              type="datetime-local"
+              size="small"
+              value={rangeValue[0] || ""}
+              onChange={(e) =>
+                setRangeValue([e.target.value, rangeValue[1] || ""])
+              }
+              InputLabelProps={{ shrink: true }}
+              sx={{ flex: 1 }}
+            />
+            <TextField
+              label="End"
+              type="datetime-local"
+              size="small"
+              value={rangeValue[1] || ""}
+              onChange={(e) =>
+                setRangeValue([rangeValue[0] || "", e.target.value])
+              }
+              InputLabelProps={{ shrink: true }}
+              sx={{ flex: 1 }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setRangeOpen(false)}>Cancel</Button>
+            <Button onClick={apply} variant="contained">
+              Apply
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </>
     );
   }
 
@@ -204,6 +268,7 @@ export default function DynamicFormField({
         inputProps={{ maxLength: length }}
         sx={fieldSx}
         disabled={!!disabled}
+        InputProps={endAdornment ? { endAdornment } : undefined}
       />
     );
   }
@@ -223,6 +288,7 @@ export default function DynamicFormField({
       inputProps={{ maxLength: length }}
       sx={fieldSx}
       disabled={disabled}
+      InputProps={endAdornment ? { endAdornment } : undefined}
     />
   );
 }

@@ -616,6 +616,63 @@ const theme = createTheme({
       WebkitTextFillColor: "transparent",
       backgroundClip: "text",
     },
+    // DataTable styles
+    dataTable: {
+      header: {
+        p: 1,
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        backgroundColor: "#2a52a483",
+      },
+      collapse: {
+        p: 1,
+        borderTop: "1px solid rgba(0,0,0,0.08)",
+        backgroundColor: "#f5f5f5",
+      },
+      filtersStack: { gap: 2, width: "100%", display: "flex" },
+      toolbarOuter: {
+        p: 1,
+        display: "flex",
+        flexDirection: { xs: "column", sm: "row" },
+        justifyContent: { xs: "flex-start", sm: "space-between" },
+        alignItems: { xs: "stretch", sm: "center" },
+        gap: { xs: 1, sm: 1 },
+        backgroundColor: "#2a52a483",
+      },
+      toolbarLeft: {
+        display: "flex",
+        gap: 0.5,
+        alignItems: "center",
+        overflowX: "auto",
+        flexWrap: { xs: "wrap", sm: "nowrap" },
+        flex: { xs: "1 1 100%", sm: "auto" },
+      },
+      toolbarRight: {
+        display: "flex",
+        gap: 1,
+        alignItems: "center",
+        width: { xs: "100%", sm: "auto" },
+        minWidth: 0,
+      },
+      filterFieldBox: {
+        display: "flex",
+        flexDirection: "column",
+        width: { xs: "100%", sm: 160 },
+        alignSelf: { xs: "center", sm: "flex-start" },
+        minWidth: 0,
+      },
+      dataGrid: {
+        border: 0,
+        "& .MuiDataGrid-columnHeaders, & .MuiDataGrid-columnHeader, & .MuiDataGrid-columnHeaderTitle":
+          {
+            backgroundColor: "#ffffff",
+            color: "#1976d2",
+          },
+        "& .MuiDataGrid-columnHeaderTitle": { fontWeight: 600 },
+        "& .MuiDataGrid-row:nth-child(odd)": { backgroundColor: "#184bb04a" },
+      },
+    },
   },
 });
 
