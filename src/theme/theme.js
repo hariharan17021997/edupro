@@ -645,7 +645,7 @@ const theme = createTheme({
         gap: 0.5,
         alignItems: "center",
         overflowX: "auto",
-        flexWrap: { xs: "wrap", sm: "nowrap" },
+        flexWrap: { xs: "nowrap", sm: "nowrap" },
         flex: { xs: "1 1 100%", sm: "auto" },
       },
       toolbarRight: {

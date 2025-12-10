@@ -498,45 +498,45 @@ export default function DataTable({
           </Typography>
 
           {/* Show only on md+ */}
-          {!isMobile && (
-            <>
-              <Tooltip title="Show Selected" placement="top">
-                <IconButton size="small" onClick={() => onAddRow && onAddRow()}>
-                  <GradingTwoToneIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Enable Filter" placement="top">
-                <IconButton size="small" onClick={() => onAddRow && onAddRow()}>
-                  <FilterAltOutlinedIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Clear Filter" placement="top">
-                <IconButton size="small" onClick={() => onAddRow && onAddRow()}>
-                  <FilterAltOffTwoToneIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Reload" placement="top">
-                <IconButton size="small" onClick={() => onAddRow && onAddRow()}>
-                  <CachedTwoToneIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Download" placement="top">
-                <IconButton size="small" onClick={() => onAddRow && onAddRow()}>
-                  <CloudDownloadIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Upload" placement="top">
-                <IconButton size="small" onClick={() => onAddRow && onAddRow()}>
-                  <CloudUploadIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Audit trail" placement="top">
-                <IconButton size="small" onClick={() => onAddRow && onAddRow()}>
-                  <VisibilityIcon />
-                </IconButton>
-              </Tooltip>
-            </>
-          )}
+          {/* {!isMobile && ( */}
+          <>
+            <Tooltip title="Show Selected" placement="top">
+              <IconButton size="small" onClick={() => onAddRow && onAddRow()}>
+                <GradingTwoToneIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Enable Filter" placement="top">
+              <IconButton size="small" onClick={() => onAddRow && onAddRow()}>
+                <FilterAltOutlinedIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Clear Filter" placement="top">
+              <IconButton size="small" onClick={() => onAddRow && onAddRow()}>
+                <FilterAltOffTwoToneIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Reload" placement="top">
+              <IconButton size="small" onClick={() => onAddRow && onAddRow()}>
+                <CachedTwoToneIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Download" placement="top">
+              <IconButton size="small" onClick={() => onAddRow && onAddRow()}>
+                <CloudDownloadIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Upload" placement="top">
+              <IconButton size="small" onClick={() => onAddRow && onAddRow()}>
+                <CloudUploadIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Audit trail" placement="top">
+              <IconButton size="small" onClick={() => onAddRow && onAddRow()}>
+                <VisibilityIcon />
+              </IconButton>
+            </Tooltip>
+          </>
+          {/* )} */}
 
           <Tooltip title="Add" placement="top">
             <IconButton size="small" onClick={() => onAddRow && onAddRow()}>
