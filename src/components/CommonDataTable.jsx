@@ -30,6 +30,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import BuildIcon from "@mui/icons-material/Build";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import LibraryAddCheckIcon from "@mui/icons-material/LibraryAddCheck";
 
 export default function DataTable({
   columns = [],
@@ -67,8 +68,8 @@ export default function DataTable({
   // so we don't pass values >100 which would throw at runtime.
   const StyledBadge = styled(Badge)(({ theme }) => ({
     "& .MuiBadge-badge": {
-      right: 5,
-      top: 1,
+      right: -2,
+      top: 5,
       border: `2px solid ${(theme.vars ?? theme).palette.background.paper}`,
       padding: "0 4px",
     },
@@ -478,7 +479,7 @@ export default function DataTable({
           <Tooltip title="Selected count" placement="top">
             <IconButton aria-label="cart" size="small">
               <StyledBadge badgeContent={4} color="primary">
-                <PlaylistAddCheckIcon />
+                <LibraryAddCheckIcon />
               </StyledBadge>
             </IconButton>
           </Tooltip>
