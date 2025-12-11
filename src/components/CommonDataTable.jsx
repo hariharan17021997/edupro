@@ -38,7 +38,7 @@ export default function DataTable({
   createSchema = [],
   searchSchema = [],
   paginationModel,
-  pageSizeOptions = [5, 10, 50, 100, 200, 300, 500],
+  pageSizeOptions = [10, 30, 50, 100, 200, 300, 500],
   checkboxSelection = true,
   sx,
   onEditRow,
@@ -60,7 +60,7 @@ export default function DataTable({
     ? { pagination: { paginationModel } }
     : {
         pagination: {
-          paginationModel: { page: 0, pageSize: pageSizeOptions?.[0] || 5 },
+          paginationModel: { page: 0, pageSize: pageSizeOptions?.[0] || 10 },
         },
       };
 
@@ -93,15 +93,18 @@ export default function DataTable({
           ? paginationModel.pageSize
           : safePageSizeOptions[0] != null
           ? safePageSizeOptions[0]
-          : 5;
+          : 10;
       return {
         page: paginationModel.page ?? 0,
         pageSize: Math.min(initialPageSize, MAX_MIT_PAGE_SIZE),
       };
     }
-    return { page: 0, pageSize: safePageSizeOptions[0] || 5 };
+    return { page: 0, pageSize: safePageSizeOptions[0] || 10 };
   });
 
+  const checkIt = () => {
+    console.log(selectionModel);
+  };
   const mappedColumns = useMemo(
     () =>
       (columns || []).map((c) => {
@@ -275,7 +278,7 @@ export default function DataTable({
   const visibleRowsCount = useMemo(() => {
     const page = localPaginationModel?.page ?? 0;
     const pageSize =
-      localPaginationModel?.pageSize ?? (pageSizeOptions?.[0] || 5);
+      localPaginationModel?.pageSize ?? (pageSizeOptions?.[0] || 10);
     const start = page * pageSize;
     if (!filteredRows || filteredRows.length === 0) return 0;
     if (start >= filteredRows.length) return 0;
@@ -532,7 +535,7 @@ export default function DataTable({
               </IconButton>
             </Tooltip>
             <Tooltip title="Audit trail" placement="top">
-              <IconButton size="small" onClick={() => onAddRow && onAddRow()}>
+              <IconButton size="small" onClick={checkIt}>
                 <VisibilityIcon />
               </IconButton>
             </Tooltip>
@@ -603,6 +606,8 @@ export default function DataTable({
       <DataGrid
         rows={filteredRows}
         columns={mappedColumns}
+        rowHeight={38}
+        headerHeight={50}
         pagination
         paginationModel={localPaginationModel}
         onPaginationModelChange={(model) =>
@@ -638,6 +643,7 @@ export default function DataTable({
         experimentalFeatures={{ columnResizing: true }}
         getRowClassName={getRowClassName}
         {...rest}
+        // disableRowSelectionOnClick
       />
     </Paper>
   );
