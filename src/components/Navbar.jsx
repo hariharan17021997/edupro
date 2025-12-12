@@ -43,6 +43,7 @@ import NotificationsIcon from "@mui/icons-material/CircleNotifications";
 import EducationIcon from "@mui/icons-material/CastForEducationOutlined";
 import InfoIcon from "@mui/icons-material/InfoOutlined";
 import VillaOutlinedIcon from "@mui/icons-material/VillaOutlined";
+import TerminalIcon from "@mui/icons-material/Terminal";
 
 const iconMap = {
   InboxIcon: InboxIcon,
@@ -53,6 +54,7 @@ const iconMap = {
   EducationIcon: EducationIcon,
   InfoIcon: InfoIcon,
   VillaOutlinedIcon: VillaOutlinedIcon,
+  TerminalIcon: TerminalIcon,
 };
 
 function DynamicIcon({ name, ...props }) {
@@ -178,7 +180,7 @@ export default function MiniDrawer() {
     { id: 1, icon: "VillaOutlinedIcon", name: "Dashboard", to: "/home" },
     { id: 2, icon: "EducationIcon", name: "Courses", to: "/education" },
     { id: 3, icon: "InfoIcon", name: "About", to: "/about" },
-    { id: 3, icon: "InfoIcon", name: "Playground", to: "/playground" },
+    { id: 3, icon: "TerminalIcon", name: "Playground", to: "/playground" },
   ];
 
   // Use a small helper function to check auth state (from src/api/auth.js)

@@ -74,7 +74,7 @@ function EditorWidget({ code, setCode, onDropSnippet }) {
             padding: 8,
             border: "1px solid #e0e0e0",
             borderRadius: 4,
-            backgroundColor: "#fafafa",
+            // backgroundColor: "#cac1c15d",
             color: "#333",
             // resize: "none",
             outline: "none",
@@ -281,13 +281,20 @@ export default function PlayGround() {
             alignItems: "center",
             justifyContent: "space-between",
             p: 1,
-            background: "#eee",
+            background: "#135ba8ff",
+            color: "white",
             cursor: "grab",
           }}
           draggable
           onDragStart={(e) => onDragStartWidget(e, "left")}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
             <DragIndicatorIcon fontSize="small" />
             <Typography variant="subtitle2">
               {getWidgetLabel(layout.left)}
@@ -297,8 +304,11 @@ export default function PlayGround() {
             {layout.left === "editor" && (
               <Button
                 size="small"
+                color="inherit"
+                variant="outlined"
                 startIcon={<PlayArrowIcon />}
                 onClick={runCode}
+                sx={{ height: "24px" }}
               >
                 Run
               </Button>
@@ -341,8 +351,10 @@ export default function PlayGround() {
             height: isMobile ? "50%" : `${topPct}%`,
             backgroundColor: "#fafafa",
             borderRadius: 1,
-            overflow: "auto",
+            overflow: "hidden",
             flexShrink: 0,
+            display: "flex",
+            flexDirection: "column",
           }}
           onDragOver={(e) => e.preventDefault()}
           onDrop={(e) => onDropWidget(e, "rightTop")}
@@ -353,8 +365,10 @@ export default function PlayGround() {
               alignItems: "center",
               justifyContent: "space-between",
               p: 1,
-              background: "#eee",
+              background: "#135ba8ff",
+              color: "white",
               cursor: "grab",
+              flexShrink: 0,
             }}
             draggable
             onDragStart={(e) => onDragStartWidget(e, "rightTop")}
@@ -369,8 +383,11 @@ export default function PlayGround() {
               {layout.rightTop === "editor" && (
                 <Button
                   size="small"
+                  color="inherit"
+                  variant="outlined"
                   startIcon={<PlayArrowIcon />}
                   onClick={runCode}
+                  sx={{ height: "24px" }}
                 >
                   Run
                 </Button>
@@ -403,7 +420,7 @@ export default function PlayGround() {
             flex: 1,
             backgroundColor: "#fff",
             borderRadius: 1,
-            overflow: "auto",
+            overflow: "hidden",
             display: "flex",
             flexDirection: "column",
             flexShrink: 0,
@@ -417,7 +434,8 @@ export default function PlayGround() {
               alignItems: "center",
               justifyContent: "space-between",
               p: 1,
-              background: "#eee",
+              background: "#135ba8ff",
+              color: "white",
               cursor: "grab",
               flexShrink: 0,
             }}
@@ -434,15 +452,25 @@ export default function PlayGround() {
               {layout.rightBottom === "editor" && (
                 <Button
                   size="small"
+                  color="inherit"
+                  variant="outlined"
                   startIcon={<PlayArrowIcon />}
                   onClick={runCode}
+                  sx={{ height: "24px" }}
                 >
                   Run
                 </Button>
               )}
             </Box>
           </Box>
-          <Box sx={{ flex: 1, p: 1, overflow: "auto" }}>
+          <Box
+            sx={{
+              flex: 1,
+              p: 1,
+              overflow: "auto",
+              //   backgroundColor: "#cac1c15d",
+            }}
+          >
             {renderWidget(layout.rightBottom)}
           </Box>
         </Box>
