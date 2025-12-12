@@ -34,6 +34,7 @@ import Home from "../pages/Home";
 import About from "../pages/About";
 import AuthPage from "../pages/AuthPage";
 import CourseContent from "../pages/CourseContent";
+import PlayGround from "../pages/PlayGround";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import LoginIcon from "@mui/icons-material/Login";
@@ -177,6 +178,7 @@ export default function MiniDrawer() {
     { id: 1, icon: "VillaOutlinedIcon", name: "Dashboard", to: "/home" },
     { id: 2, icon: "EducationIcon", name: "Courses", to: "/education" },
     { id: 3, icon: "InfoIcon", name: "About", to: "/about" },
+    { id: 3, icon: "InfoIcon", name: "Playground", to: "/playground" },
   ];
 
   // Use a small helper function to check auth state (from src/api/auth.js)
@@ -409,6 +411,7 @@ export default function MiniDrawer() {
               <Route path="/home" element={<Home />} />
               <Route path="/about" element={<About />} />
               <Route path="/education" element={<CourseContent />} />
+              <Route path="/playground" element={<PlayGround />} />
               <Route path="/" element={<Navigate to="/home" replace />} />
               <Route path="/login" element={<Navigate to="/home" replace />} />
               <Route path="*" element={<Navigate to="/home" replace />} />

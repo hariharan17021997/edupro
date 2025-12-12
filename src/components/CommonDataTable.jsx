@@ -608,6 +608,8 @@ export default function DataTable({
         columns={mappedColumns}
         rowHeight={38}
         headerHeight={50}
+        showToolbar
+        // filterModel={filterModel}
         pagination
         paginationModel={localPaginationModel}
         onPaginationModelChange={(model) =>
