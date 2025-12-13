@@ -6,6 +6,9 @@ import {
   List,
   ListItem,
   ListItemText,
+  Select,
+  MenuItem,
+  FormControl,
 } from "@mui/material";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
@@ -26,7 +29,7 @@ const defaultQuestions = [
 
 function QuestionsWidget({ codeSetter, onDragStart }) {
   return (
-    <Box sx={{ p: 1 }}>
+    <Box sx={{ p: 1, overflow: "auto", minHeight: 0 }}>
       <List dense>
         {defaultQuestions.map((q) => (
           <ListItem
@@ -58,12 +61,20 @@ function EditorWidget({ code, setCode, onDropSnippet }) {
         display: "flex",
         flexDirection: "column",
         height: "100%",
-        overflow: "auto",
+        overflow: "hidden",
       }}
       onDragOver={(e) => e.preventDefault()}
       onDrop={(e) => onDropSnippet(e)}
     >
-      <Box sx={{ flex: 1, p: 1, display: "flex", flexDirection: "column" }}>
+      <Box
+        sx={{
+          flex: 1,
+          p: 1,
+          display: "flex",
+          flexDirection: "column",
+          minHeight: 0,
+        }}
+      >
         <textarea
           style={{
             width: "100%",
@@ -76,7 +87,8 @@ function EditorWidget({ code, setCode, onDropSnippet }) {
             borderRadius: 4,
             // backgroundColor: "#cac1c15d",
             color: "#333",
-            // resize: "none",
+            resize: "none",
+            overflow: "auto",
             outline: "none",
           }}
           value={code}
@@ -97,6 +109,8 @@ function OutputWidget({ output }) {
         wordBreak: "break-word",
         fontFamily: "monospace",
         fontSize: 13,
+        overflow: "auto",
+        minHeight: 0,
       }}
     >
       {output || (
@@ -121,6 +135,15 @@ export default function PlayGround() {
   // dragging for resize
   const draggingVert = useRef(false);
   const draggingHoriz = useRef(false);
+
+  // layout selector: Layout1 (current) or Layout2 (three horizontal columns)
+  const [layoutMode, setLayoutMode] = useState("Layout1");
+
+  // Layout2 column widths (percent)
+  const [col1Pct, setCol1Pct] = useState(33.33);
+  const [col2Pct, setCol2Pct] = useState(33.33);
+  const draggingCol1 = useRef(false);
+  const draggingCol2 = useRef(false);
 
   // content states
   const [code, setCode] = useState(
@@ -150,10 +173,35 @@ export default function PlayGround() {
         const newTopPct = (y / rect.height) * 100;
         if (newTopPct > 10 && newTopPct < 90) setTopPct(newTopPct);
       }
+      // Layout2 resizing: adjust column widths
+      if (draggingCol1.current) {
+        const cont = document.getElementById("layout2-container");
+        if (!cont) return;
+        const rect = cont.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const pct = (x / rect.width) * 100;
+        if (pct > 10 && pct < 80) {
+          // ensure col2 remains at least 10%
+          const col2 = Math.max(10, Math.min(col2Pct, 100 - pct - 10));
+          setCol1Pct(pct);
+          setCol2Pct(col2);
+        }
+      }
+      if (draggingCol2.current) {
+        const cont = document.getElementById("layout2-container");
+        if (!cont) return;
+        const rect = cont.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const pct = (x / rect.width) * 100;
+        const newCol2 = pct - col1Pct;
+        if (newCol2 > 10 && newCol2 < 80) setCol2Pct(newCol2);
+      }
     };
     const onUp = () => {
       draggingVert.current = false;
       draggingHoriz.current = false;
+      draggingCol1.current = false;
+      draggingCol2.current = false;
     };
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
@@ -161,7 +209,7 @@ export default function PlayGround() {
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
     };
-  }, []);
+  }, [col1Pct, col2Pct]);
 
   const startVert = (e) => {
     draggingVert.current = true;
@@ -257,224 +305,431 @@ export default function PlayGround() {
       sx={{
         height: "calc(100vh - 80px)",
         display: "flex",
-        flexDirection: isMobile ? "column" : "row",
-        gap: 1,
+        flexDirection: "column",
       }}
     >
-      {/* Left pane */}
-      <Box
-        sx={{
-          width: isMobile ? "100%" : `${leftPct}%`,
-          minWidth: isMobile ? "auto" : 120,
-          backgroundColor: "#f7f7f7",
-          display: "flex",
-          flexDirection: "column",
-          borderRadius: 1,
-          overflow: "hidden",
-        }}
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={(e) => onDropWidget(e, "left")}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            p: 1,
-            background: "#135ba8ff",
-            color: "white",
-            cursor: "grab",
-          }}
-          draggable
-          onDragStart={(e) => onDragStartWidget(e, "left")}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-            }}
+      {/* Top dropdown selector */}
+      <Box sx={{ p: 1, borderBottom: "1px solid #eee", background: "#fafafa" }}>
+        <FormControl size="small" sx={{ minWidth: 160 }}>
+          <Select
+            value={layoutMode}
+            onChange={(e) => setLayoutMode(e.target.value)}
           >
-            <DragIndicatorIcon fontSize="small" />
-            <Typography variant="subtitle2">
-              {getWidgetLabel(layout.left)}
-            </Typography>
-          </Box>
-          <Box>
-            {layout.left === "editor" && (
-              <Button
-                size="small"
-                color="inherit"
-                variant="outlined"
-                startIcon={<PlayArrowIcon />}
-                onClick={runCode}
-                sx={{ height: "24px" }}
-              >
-                Run
-              </Button>
-            )}
-          </Box>
-        </Box>
+            <MenuItem value="Layout1">Layout1</MenuItem>
+            <MenuItem value="Layout2">Layout2</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+
+      {layoutMode === "Layout1" ? (
         <Box
           sx={{
             flex: 1,
-            overflow: "auto",
             display: "flex",
-            flexDirection: "column",
+            flexDirection: isMobile ? "column" : "row",
+            gap: 1,
+            p: 1,
           }}
         >
-          {renderWidget(layout.left)}
-        </Box>
-      </Box>
-
-      {/* Vertical splitter */}
-      {!isMobile && (
-        <Box
-          sx={{ width: 6, cursor: "col-resize", bgcolor: "#eee" }}
-          onMouseDown={startVert}
-        />
-      )}
-
-      {/* Right area */}
-      <Box
-        id="right-area"
-        sx={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          gap: 1,
-          overflow: "auto",
-        }}
-      >
-        <Box
-          sx={{
-            height: isMobile ? "50%" : `${topPct}%`,
-            backgroundColor: "#fafafa",
-            borderRadius: 1,
-            overflow: "hidden",
-            flexShrink: 0,
-            display: "flex",
-            flexDirection: "column",
-          }}
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={(e) => onDropWidget(e, "rightTop")}
-        >
+          {/* Left pane */}
           <Box
             sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              p: 1,
-              background: "#135ba8ff",
-              color: "white",
-              cursor: "grab",
-              flexShrink: 0,
-            }}
-            draggable
-            onDragStart={(e) => onDragStartWidget(e, "rightTop")}
-          >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <DragIndicatorIcon fontSize="small" />
-              <Typography variant="subtitle2">
-                {getWidgetLabel(layout.rightTop)}
-              </Typography>
-            </Box>
-            <Box>
-              {layout.rightTop === "editor" && (
-                <Button
-                  size="small"
-                  color="inherit"
-                  variant="outlined"
-                  startIcon={<PlayArrowIcon />}
-                  onClick={runCode}
-                  sx={{ height: "24px" }}
-                >
-                  Run
-                </Button>
-              )}
-            </Box>
-          </Box>
-          <Box
-            sx={{
-              flex: 1,
-              height: "100%",
-              overflow: "auto",
+              width: isMobile ? "100%" : `${leftPct}%`,
+              minWidth: isMobile ? "auto" : 120,
+              backgroundColor: "#f7f7f7",
               display: "flex",
               flexDirection: "column",
+              borderRadius: 1,
+              overflow: "hidden",
+            }}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => onDropWidget(e, "left")}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                p: 1,
+                background: "#135ba8ff",
+                color: "white",
+                cursor: "grab",
+              }}
+              draggable
+              onDragStart={(e) => onDragStartWidget(e, "left")}
+            >
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <DragIndicatorIcon fontSize="small" />
+                <Typography variant="subtitle2">
+                  {getWidgetLabel(layout.left)}
+                </Typography>
+              </Box>
+              <Box>
+                {layout.left === "editor" && (
+                  <Button
+                    size="small"
+                    color="inherit"
+                    variant="outlined"
+                    startIcon={<PlayArrowIcon />}
+                    onClick={runCode}
+                    sx={{ height: "24px" }}
+                  >
+                    Run
+                  </Button>
+                )}
+              </Box>
+            </Box>
+            <Box
+              sx={{
+                flex: 1,
+                overflow: "auto",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              {renderWidget(layout.left)}
+            </Box>
+          </Box>
+
+          {/* Vertical splitter */}
+          {!isMobile && (
+            <Box
+              sx={{ width: 6, cursor: "col-resize", bgcolor: "#eee" }}
+              onMouseDown={startVert}
+            />
+          )}
+
+          {/* Right area */}
+          <Box
+            id="right-area"
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+              overflow: "auto",
             }}
           >
-            {renderWidget(layout.rightTop)}
+            <Box
+              sx={{
+                height: isMobile ? "50%" : `${topPct}%`,
+                backgroundColor: "#fafafa",
+                borderRadius: 1,
+                overflow: "hidden",
+                flexShrink: 0,
+                display: "flex",
+                flexDirection: "column",
+              }}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => onDropWidget(e, "rightTop")}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  p: 1,
+                  background: "#135ba8ff",
+                  color: "white",
+                  cursor: "grab",
+                  flexShrink: 0,
+                }}
+                draggable
+                onDragStart={(e) => onDragStartWidget(e, "rightTop")}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <DragIndicatorIcon fontSize="small" />
+                  <Typography variant="subtitle2">
+                    {getWidgetLabel(layout.rightTop)}
+                  </Typography>
+                </Box>
+                <Box>
+                  {layout.rightTop === "editor" && (
+                    <Button
+                      size="small"
+                      color="inherit"
+                      variant="outlined"
+                      startIcon={<PlayArrowIcon />}
+                      onClick={runCode}
+                      sx={{ height: "24px" }}
+                    >
+                      Run
+                    </Button>
+                  )}
+                </Box>
+              </Box>
+              <Box
+                sx={{
+                  flex: 1,
+                  height: "100%",
+                  overflow: "auto",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                {renderWidget(layout.rightTop)}
+              </Box>
+            </Box>
+
+            {!isMobile && (
+              <Box
+                sx={{ height: 6, cursor: "row-resize", bgcolor: "#eee" }}
+                onMouseDown={startHoriz}
+              />
+            )}
+
+            <Box
+              sx={{
+                flex: 1,
+                backgroundColor: "#fff",
+                borderRadius: 1,
+                overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
+                flexShrink: 0,
+              }}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => onDropWidget(e, "rightBottom")}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  p: 1,
+                  background: "#135ba8ff",
+                  color: "white",
+                  cursor: "grab",
+                  flexShrink: 0,
+                }}
+                draggable
+                onDragStart={(e) => onDragStartWidget(e, "rightBottom")}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <DragIndicatorIcon fontSize="small" />
+                  <Typography variant="subtitle2">
+                    {getWidgetLabel(layout.rightBottom)}
+                  </Typography>
+                </Box>
+                <Box>
+                  {layout.rightBottom === "editor" && (
+                    <Button
+                      size="small"
+                      color="inherit"
+                      variant="outlined"
+                      startIcon={<PlayArrowIcon />}
+                      onClick={runCode}
+                      sx={{ height: "24px" }}
+                    >
+                      Run
+                    </Button>
+                  )}
+                </Box>
+              </Box>
+              <Box sx={{ flex: 1, p: 1, overflow: "auto" }}>
+                {renderWidget(layout.rightBottom)}
+              </Box>
+            </Box>
           </Box>
         </Box>
-
-        {/* Horizontal splitter */}
-        {!isMobile && (
-          <Box
-            sx={{ height: 6, cursor: "row-resize", bgcolor: "#eee" }}
-            onMouseDown={startHoriz}
-          />
-        )}
-
+      ) : (
+        // Layout2: three equal columns (resizable)
         <Box
-          sx={{
-            flex: 1,
-            backgroundColor: "#fff",
-            borderRadius: 1,
-            overflow: "hidden",
-            display: "flex",
-            flexDirection: "column",
-            flexShrink: 0,
-          }}
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={(e) => onDropWidget(e, "rightBottom")}
+          id="layout2-container"
+          sx={{ flex: 1, display: "flex", gap: 1, p: 1, minHeight: 0 }}
         >
           <Box
             sx={{
+              width: `${col1Pct}%`,
+              backgroundColor: "#f7f7f7",
               display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              p: 1,
-              background: "#135ba8ff",
-              color: "white",
-              cursor: "grab",
-              flexShrink: 0,
+              flexDirection: "column",
+              borderRadius: 1,
+              overflow: "hidden",
+              minHeight: 0,
             }}
-            draggable
-            onDragStart={(e) => onDragStartWidget(e, "rightBottom")}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => onDropWidget(e, "left")}
           >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <DragIndicatorIcon fontSize="small" />
-              <Typography variant="subtitle2">
-                {getWidgetLabel(layout.rightBottom)}
-              </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                p: 1,
+                background: "#135ba8ff",
+                color: "white",
+                cursor: "grab",
+              }}
+              draggable
+              onDragStart={(e) => onDragStartWidget(e, "left")}
+            >
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <DragIndicatorIcon fontSize="small" />
+                <Typography variant="subtitle2">
+                  {getWidgetLabel(layout.left)}
+                </Typography>
+              </Box>
+              <Box>
+                {layout.left === "editor" && (
+                  <Button
+                    size="small"
+                    color="inherit"
+                    variant="outlined"
+                    startIcon={<PlayArrowIcon />}
+                    onClick={runCode}
+                    sx={{ height: "24px" }}
+                  >
+                    Run
+                  </Button>
+                )}
+              </Box>
             </Box>
-            <Box>
-              {layout.rightBottom === "editor" && (
-                <Button
-                  size="small"
-                  color="inherit"
-                  variant="outlined"
-                  startIcon={<PlayArrowIcon />}
-                  onClick={runCode}
-                  sx={{ height: "24px" }}
-                >
-                  Run
-                </Button>
-              )}
+            <Box
+              sx={{
+                flex: 1,
+                overflow: "auto",
+                display: "flex",
+                flexDirection: "column",
+                minHeight: 0,
+              }}
+            >
+              {renderWidget(layout.left)}
             </Box>
           </Box>
+
+          <Box
+            sx={{ width: 6, cursor: "col-resize", bgcolor: "#ddd" }}
+            onMouseDown={() => (draggingCol1.current = true)}
+          />
+
           <Box
             sx={{
-              flex: 1,
-              p: 1,
-              overflow: "auto",
-              //   backgroundColor: "#cac1c15d",
+              width: `${col2Pct}%`,
+              backgroundColor: "#fafafa",
+              display: "flex",
+              flexDirection: "column",
+              borderRadius: 1,
+              overflow: "hidden",
+              minHeight: 0,
             }}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => onDropWidget(e, "rightTop")}
           >
-            {renderWidget(layout.rightBottom)}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                p: 1,
+                background: "#135ba8ff",
+                color: "white",
+                cursor: "grab",
+              }}
+              draggable
+              onDragStart={(e) => onDragStartWidget(e, "rightTop")}
+            >
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <DragIndicatorIcon fontSize="small" />
+                <Typography variant="subtitle2">
+                  {getWidgetLabel(layout.rightTop)}
+                </Typography>
+              </Box>
+              <Box>
+                {layout.rightTop === "editor" && (
+                  <Button
+                    size="small"
+                    color="inherit"
+                    variant="outlined"
+                    startIcon={<PlayArrowIcon />}
+                    onClick={runCode}
+                    sx={{ height: "24px" }}
+                  >
+                    Run
+                  </Button>
+                )}
+              </Box>
+            </Box>
+            <Box
+              sx={{
+                flex: 1,
+                overflow: "auto",
+                display: "flex",
+                flexDirection: "column",
+                minHeight: 0,
+              }}
+            >
+              {renderWidget(layout.rightTop)}
+            </Box>
+          </Box>
+
+          <Box
+            sx={{ width: 6, cursor: "col-resize", bgcolor: "#ddd" }}
+            onMouseDown={() => (draggingCol2.current = true)}
+          />
+
+          <Box
+            sx={{
+              width: `${100 - col1Pct - col2Pct}%`,
+              backgroundColor: "#fff",
+              display: "flex",
+              flexDirection: "column",
+              borderRadius: 1,
+              overflow: "hidden",
+              minHeight: 0,
+            }}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => onDropWidget(e, "rightBottom")}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                p: 1,
+                background: "#135ba8ff",
+                color: "white",
+                cursor: "grab",
+              }}
+              draggable
+              onDragStart={(e) => onDragStartWidget(e, "rightBottom")}
+            >
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <DragIndicatorIcon fontSize="small" />
+                <Typography variant="subtitle2">
+                  {getWidgetLabel(layout.rightBottom)}
+                </Typography>
+              </Box>
+              <Box>
+                {layout.rightBottom === "editor" && (
+                  <Button
+                    size="small"
+                    color="inherit"
+                    variant="outlined"
+                    startIcon={<PlayArrowIcon />}
+                    onClick={runCode}
+                    sx={{ height: "24px" }}
+                  >
+                    Run
+                  </Button>
+                )}
+              </Box>
+            </Box>
+            <Box
+              sx={{
+                flex: 1,
+                p: 1,
+                overflow: "auto",
+                display: "flex",
+                flexDirection: "column",
+                minHeight: 0,
+              }}
+            >
+              {renderWidget(layout.rightBottom)}
+            </Box>
           </Box>
         </Box>
-      </Box>
+      )}
     </Box>
   );
 }

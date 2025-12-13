@@ -178,9 +178,9 @@ export default function MiniDrawer() {
 
   const products = [
     { id: 1, icon: "VillaOutlinedIcon", name: "Dashboard", to: "/home" },
-    { id: 2, icon: "EducationIcon", name: "Courses", to: "/education" },
-    { id: 3, icon: "InfoIcon", name: "About", to: "/about" },
-    { id: 3, icon: "TerminalIcon", name: "Playground", to: "/playground" },
+    { id: 2, icon: "TerminalIcon", name: "Playground", to: "/playground" },
+    { id: 3, icon: "EducationIcon", name: "Courses", to: "/education" },
+    { id: 4, icon: "InfoIcon", name: "About", to: "/about" },
   ];
 
   // Use a small helper function to check auth state (from src/api/auth.js)
