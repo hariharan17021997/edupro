@@ -25,6 +25,37 @@ const defaultQuestions = [
     title: "Current Time",
     snippet: "console.log(new Date().toString());",
   },
+  // { id: 4, title: "Example 4", snippet: "console.log('This is example 4');" },
+  // { id: 5, title: "Example 5", snippet: "console.log('This is example 5');" },
+  // { id: 6, title: "Example 6", snippet: "console.log('This is example 6');" },
+  // { id: 7, title: "Example 7", snippet: "console.log('This is example 7');" },
+  // { id: 8, title: "Example 8", snippet: "console.log('This is example 8');" },
+  // { id: 9, title: "Example 9", snippet: "console.log('This is example 9');" },
+  // {
+  //   id: 10,
+  //   title: "Example 10",
+  //   snippet: "console.log('This is example 10');",
+  // },
+  // {
+  //   id: 10,
+  //   title: "Example 10",
+  //   snippet: "console.log('This is example 10');",
+  // },
+  // {
+  //   id: 10,
+  //   title: "Example 10",
+  //   snippet: "console.log('This is example 10');",
+  // },
+  // {
+  //   id: 10,
+  //   title: "Example 10",
+  //   snippet: "console.log('This is example 10');",
+  // },
+  // {
+  //   id: 10,
+  //   title: "Example 10",
+  //   snippet: "console.log('This is example 10');",
+  // },
 ];
 
 function QuestionsWidget({ codeSetter, onDragStart }) {
@@ -312,16 +343,19 @@ export default function PlayGround() {
       <Box sx={{ p: 1, borderBottom: "1px solid #eee", background: "#fafafa" }}>
         <FormControl size="small" sx={{ minWidth: 160 }}>
           <Select
-            value={layoutMode}
+            value={isMobile ? "Layout1" : layoutMode}
             onChange={(e) => setLayoutMode(e.target.value)}
+            disabled={isMobile}
           >
             <MenuItem value="Layout1">Layout1</MenuItem>
-            <MenuItem value="Layout2">Layout2</MenuItem>
+            <MenuItem value="Layout2" disabled={isMobile}>
+              Layout2
+            </MenuItem>
           </Select>
         </FormControl>
       </Box>
 
-      {layoutMode === "Layout1" ? (
+      {isMobile || layoutMode === "Layout1" ? (
         <Box
           sx={{
             flex: 1,
