@@ -214,7 +214,7 @@ export default function Home() {
       sortable: true,
       // tooltipFields: ["email", "mobile", "status"],
       // defaultSort: true,
-      type: "string",
+      type: "number",
     },
     {
       id: "firstname",

@@ -4,6 +4,12 @@ import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
+import Popover from "@mui/material/Popover";
+import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Chip from "@mui/material/Chip";
+import Divider from "@mui/material/Divider";
 // InputAdornment was removed; kept imports minimal
 import CommonButton from "./CommonButton";
 import DynamicFormField from "./DynamicFormField";
@@ -31,6 +37,9 @@ import BuildIcon from "@mui/icons-material/Build";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import LibraryAddCheckIcon from "@mui/icons-material/LibraryAddCheck";
+import ClearAllIcon from "@mui/icons-material/ClearAll";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import DoneIcon from "@mui/icons-material/Done";
 
 export default function DataTable({
   columns = [],
@@ -56,6 +65,14 @@ export default function DataTable({
   const [selectionModel, setSelectionModel] = useState([]);
   const [showColumnFilters, setShowColumnFilters] = useState(true);
   const [columnFilters, setColumnFilters] = useState({});
+  const [multiFilters, setMultiFilters] = useState([]);
+  const [filterAnchorEl, setFilterAnchorEl] = useState(null);
+  const [tempFilter, setTempFilter] = useState({
+    field: "",
+    operator: "",
+    value: "",
+  });
+  const [stagedFilters, setStagedFilters] = useState([]);
   const initialState = paginationModel
     ? { pagination: { paginationModel } }
     : {
@@ -104,6 +121,53 @@ export default function DataTable({
 
   const checkIt = () => {
     console.log(selectionModel);
+  };
+
+  const openFilterPopover = (e) => {
+    setFilterAnchorEl(e.currentTarget);
+    // initialize staging with currently committed filters
+    setStagedFilters(multiFilters || []);
+  };
+  const cancelFilterPopover = () => {
+    // discard staged changes
+    setStagedFilters(multiFilters || []);
+    setTempFilter({ field: "", operator: "", value: "" });
+    setFilterAnchorEl(null);
+  };
+  const commitFilterPopover = () => {
+    // commit staged filters to active filters (apply filtering)
+    setMultiFilters(stagedFilters || []);
+    setTempFilter({ field: "", operator: "", value: "" });
+    // setFilterAnchorEl(null);
+  };
+
+  const filterOpen = Boolean(filterAnchorEl);
+
+  const getColByField = (field) =>
+    mappedColumns.find((c) => c.field === field) || null;
+
+  const operatorOptionsForType = (type) => {
+    if (!type) return ["contains", "equals"];
+    const t = String(type || "").toLowerCase();
+    if (t === "number") return ["=", "!=", ">", "<", "between"];
+    if (t.includes("date")) return ["=", "!=", "before", "after", "between"];
+    if (t.includes("select")) return ["equals", "not equals"];
+    return ["contains", "equals", "startsWith", "endsWith"];
+  };
+
+  const addTempFilter = () => {
+    if (!tempFilter.field || !tempFilter.operator) return;
+    setStagedFilters((prev) => [...(prev || []), tempFilter]);
+    setTempFilter({ field: "", operator: "", value: "" });
+  };
+
+  // const removeMultiFilter = (idx) => {
+  //   setStagedFilters((prev) => (prev || []).filter((_, i) => i !== idx));
+  //   setMultiFilters((prev) => prev.filter((_, i) => i !== idx));
+  // };
+  const removeStagedFilter = (idx) => {
+    setStagedFilters((prev) => (prev || []).filter((_, i) => i !== idx));
+    setMultiFilters((prev) => prev.filter((_, i) => i !== idx));
   };
   const mappedColumns = useMemo(
     () =>
@@ -270,9 +334,81 @@ export default function DataTable({
         }
       }
 
+      // multiFilters: additional ad-hoc filters (AND semantics)
+      for (const f of multiFilters || []) {
+        if (!f || !f.field || !f.operator) continue;
+        const field = f.field;
+        const v = f.value;
+        const raw = row?.[field];
+        if (raw == null) return false;
+
+        const colDef = mappedColumns.find((c) => c.field === field) || {};
+        const type = colDef.type || colDef._schemaType || "string";
+
+        if (type === "date" || type === "dateTime" || type === "datetime") {
+          const cellDate = raw instanceof Date ? raw : new Date(raw);
+          if (Number.isNaN(cellDate.getTime())) return false;
+
+          if (typeof v === "string" && v.trim() !== "") {
+            if (/^\d{4}-\d{2}-\d{2}$/.test(v)) {
+              if (cellDate.toISOString().slice(0, 10) !== v) return false;
+            } else {
+              const target = new Date(v);
+              if (!Number.isNaN(target.getTime())) {
+                if (cellDate.getTime() !== target.getTime()) return false;
+              } else {
+                if (
+                  !cellDate
+                    .toISOString()
+                    .toLowerCase()
+                    .includes(String(v).toLowerCase())
+                )
+                  return false;
+              }
+            }
+          } else if (typeof v === "object") {
+            const from = v.from ? new Date(v.from) : null;
+            const to = v.to ? new Date(v.to) : null;
+            if (from && cellDate < from) return false;
+            if (to && cellDate > to) return false;
+          }
+        } else {
+          // text/number: apply operator-specific matching
+          const needle = String(v).toLowerCase();
+          const hay = raw instanceof Date ? raw.toISOString() : String(raw);
+          const hayLower = hay.toLowerCase();
+
+          // Check operator and apply appropriate match logic
+          const operator = f.operator || "contains";
+          if (operator === "equals" || operator === "=") {
+            // Exact match
+            if (hayLower !== needle) return false;
+          } else if (operator === "not equals" || operator === "!=") {
+            // Inverse exact match
+            if (hayLower === needle) return false;
+          } else if (operator === "startsWith") {
+            // Starts with
+            if (!hayLower.startsWith(needle)) return false;
+          } else if (operator === "endsWith") {
+            // Ends with
+            if (!hayLower.endsWith(needle)) return false;
+          } else if (operator === ">" || operator === "<") {
+            // Numeric comparison
+            const numRaw = Number(raw);
+            const numVal = Number(v);
+            if (isNaN(numRaw) || isNaN(numVal)) return false;
+            if (operator === ">" && !(numRaw > numVal)) return false;
+            if (operator === "<" && !(numRaw < numVal)) return false;
+          } else {
+            // Default: "contains" - substring match
+            if (!hayLower.includes(needle)) return false;
+          }
+        }
+      }
+
       return true;
     });
-  }, [rows, mappedColumns, searchText, columnFilters]);
+  }, [rows, mappedColumns, searchText, columnFilters, multiFilters]);
 
   // number of rows visible on the current page (respecting current page and pageSize)
   const visibleRowsCount = useMemo(() => {
@@ -509,13 +645,26 @@ export default function DataTable({
                 <GradingTwoToneIcon />
               </IconButton>
             </Tooltip>
-            <Tooltip title="Enable Filter" placement="top">
-              <IconButton size="small" onClick={() => onAddRow && onAddRow()}>
-                <FilterAltOutlinedIcon />
+            <Tooltip title="Filters" placement="top">
+              <IconButton
+                size="small"
+                onClick={openFilterPopover}
+                aria-label="open-filters"
+              >
+                <StyledBadge badgeContent={multiFilters.length} color="primary">
+                  <FilterAltOutlinedIcon />
+                </StyledBadge>
               </IconButton>
             </Tooltip>
-            <Tooltip title="Clear Filter" placement="top">
-              <IconButton size="small" onClick={() => onAddRow && onAddRow()}>
+            <Tooltip title="Clear Filters" placement="top">
+              <IconButton
+                size="small"
+                onClick={() => {
+                  setMultiFilters([]);
+                  setColumnFilters({});
+                  setSearchText("");
+                }}
+              >
                 <FilterAltOffTwoToneIcon />
               </IconButton>
             </Tooltip>
@@ -602,6 +751,293 @@ export default function DataTable({
           </Tooltip>
         </Box>
       </Box>
+
+      <Popover
+        open={filterOpen}
+        anchorEl={filterAnchorEl}
+        onClose={cancelFilterPopover}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Box
+          sx={{
+            p: 2,
+            width: 600,
+            maxWidth: "90vw",
+            backgroundColor: "#2a53a430",
+          }}
+        >
+          <Typography variant="subtitle2" sx={{ mb: 1 }}>
+            Add filter
+          </Typography>
+          <Box
+            sx={{ display: "flex", gap: 1, justifyContent: "flex-end", mb: 1 }}
+          >
+            <TextField
+              select
+              size="small"
+              label="Column"
+              value={tempFilter.field}
+              onChange={(e) => {
+                const f = e.target.value;
+                setTempFilter({ field: f, operator: "", value: "" });
+              }}
+              fullWidth
+              sx={{ mb: 1 }}
+            >
+              {(mappedColumns || []).map((c) =>
+                c.field ? (
+                  <MenuItem key={c.field} value={c.field}>
+                    {c.headerName || c.field}
+                  </MenuItem>
+                ) : null
+              )}
+            </TextField>
+
+            <TextField
+              select
+              size="small"
+              label="Operator"
+              value={tempFilter.operator}
+              onChange={(e) =>
+                setTempFilter((p) => ({
+                  ...p,
+                  operator: e.target.value,
+                  value: "",
+                }))
+              }
+              fullWidth
+              sx={{ mb: 1 }}
+              disabled={!tempFilter.field}
+            >
+              {(
+                operatorOptionsForType(getColByField(tempFilter.field)?.type) ||
+                []
+              ).map((op) => (
+                <MenuItem key={op} value={op}>
+                  {op}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            {/* Value input (single or between) */}
+            {tempFilter.operator === "between" ? (
+              <Box sx={{ display: "flex", gap: 1, mb: 1 }}>
+                <TextField
+                  size="small"
+                  label="From"
+                  value={tempFilter.value?.from || ""}
+                  onChange={(e) =>
+                    setTempFilter((p) => ({
+                      ...p,
+                      value: { ...(p.value || {}), from: e.target.value },
+                    }))
+                  }
+                  fullWidth
+                />
+                <TextField
+                  size="small"
+                  label="To"
+                  value={tempFilter.value?.to || ""}
+                  onChange={(e) =>
+                    setTempFilter((p) => ({
+                      ...p,
+                      value: { ...(p.value || {}), to: e.target.value },
+                    }))
+                  }
+                  fullWidth
+                />
+              </Box>
+            ) : (
+              <TextField
+                size="small"
+                label="Value"
+                value={tempFilter.value || ""}
+                onChange={(e) =>
+                  setTempFilter((p) => ({ ...p, value: e.target.value }))
+                }
+                fullWidth
+                sx={{ mb: 1 }}
+                disabled={!tempFilter.operator}
+              />
+            )}
+            {/* <Button
+              size="small"
+              variant="outlined"
+              onClick={() => {
+                addTempFilter();
+              }}
+              disabled={!tempFilter.field || !tempFilter.operator}
+            >
+              <AddIcon />
+            </Button> */}
+            <Tooltip title="Add" placement="top">
+              <IconButton
+                size="small"
+                onClick={() => {
+                  addTempFilter();
+                }}
+                disabled={!tempFilter.field || !tempFilter.operator}
+                aria-label="add filter"
+              >
+                <AddIcon />
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title="Reset">
+              <IconButton
+                size="small"
+                variant="outlined"
+                disabled={
+                  !tempFilter.field && !tempFilter.operator && !tempFilter.value
+                }
+                onClick={() => {
+                  setTempFilter({ field: "", operator: "", value: "" });
+                }}
+              >
+                <RestartAltIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
+
+          {/* <Box
+            sx={{ display: "flex", gap: 1, justifyContent: "flex-end", mb: 1 }}
+          >
+            <Tooltip title="Clear All">
+              <IconButton
+                size="small"
+                variant="outlined"
+                onClick={() => setStagedFilters([])}
+              >
+                <ClearAllIcon />
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title="Done">
+              <IconButton
+                size="small"
+                variant="contained"
+                onClick={commitFilterPopover}
+              >
+                <DoneIcon />
+              </IconButton>
+            </Tooltip> */}
+
+          {/* <Button
+              size="small"
+              variant="outlined"
+              onClick={() => setMultiFilters([])}
+            >
+              Clear All
+            </Button> */}
+          {/* <Button
+              size="small"
+              variant="contained"
+              onClick={closeFilterPopover}
+            >
+              Done
+            </Button> */}
+          {/* <Button
+              size="small"
+              variant="outlined"
+              onClick={() => {
+                setTempFilter({ field: "", operator: "", value: "" });
+              }}
+            >
+              Reset
+            </Button> */}
+          {/* <Button
+              size="small"
+              variant="contained"
+              onClick={() => {
+                addTempFilter();
+              }}
+              disabled={!tempFilter.field || !tempFilter.operator}
+            >
+              Add
+            </Button> */}
+          {/* </Box> */}
+
+          <Divider sx={{ my: 1 }} />
+
+          <Typography variant="caption">Staged filters</Typography>
+          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mt: 1 }}>
+            {stagedFilters == null || stagedFilters.length === 0 ? (
+              <Typography variant="body2" color="text.secondary">
+                (None)
+              </Typography>
+            ) : null}
+            {(stagedFilters || []).map((f, i) => {
+              const col = getColByField(f.field);
+              const label = `${col?.headerName || f.field} ${f.operator} ${
+                typeof f.value === "object"
+                  ? `${f.value.from || ""} - ${f.value.to || ""}`
+                  : f.value
+              }`;
+              return (
+                <Chip
+                  key={i}
+                  label={label}
+                  size="small"
+                  onDelete={() => removeStagedFilter(i)}
+                />
+              );
+            })}
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1,
+              justifyContent: "flex-end",
+              mb: 1,
+            }}
+          >
+            <Tooltip title="Clear All">
+              <IconButton
+                size="small"
+                variant="outlined"
+                onClick={() => {
+                  setStagedFilters([]);
+                  setMultiFilters([]);
+                  setColumnFilters({});
+                  setSearchText("");
+                  setTempFilter({ field: "", operator: "", value: "" });
+                }}
+              >
+                <ClearAllIcon />
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title="Apply filter">
+              <IconButton
+                size="small"
+                variant="contained"
+                onClick={commitFilterPopover}
+              >
+                <DoneIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
+
+          {/* <Box
+            sx={{ display: "flex", gap: 1, justifyContent: "flex-end", mt: 2 }}
+          >
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => setMultiFilters([])}
+            >
+              Clear All
+            </Button>
+            <Button
+              size="small"
+              variant="contained"
+              onClick={closeFilterPopover}
+            >
+              Done
+            </Button>
+          </Box> */}
+        </Box>
+      </Popover>
 
       <DataGrid
         rows={filteredRows}
